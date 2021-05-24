@@ -1,0 +1,76 @@
+<mvc:View
+   id="mainview"
+   controllerName="webapp.controller.App"
+   xmlns="sap.m"
+   xmlns:mvc="sap.ui.core.mvc"
+   displayBlock="true">
+   <Shell>
+      <App class="myAppDemoWT" id="app">
+         <Page title="{i18n>homePageTitle}">
+            <content>
+               <Table
+                  id="productList"
+                  growing="true"
+                  growingThreshold="10"
+                  items="{
+                     path: 'product>/Products'
+                  }"
+                  mode="SingleSelectLeft"
+                  selectionChange="onSelectionChange">
+                  <headerToolbar>
+                     <OverflowToolbar>
+                        <content>
+                           <ToolbarSpacer/>
+                           <Button
+                              id="addProductButton"
+                              icon="sap-icon://add"
+                              tooltip="{i18n>createButtonText}"
+                              press=".onCreate"/>
+                           <Button
+                              id="changeProductButton"
+                              icon="sap-icon://journey-change"
+                              tooltip="{i18n>changeButtonText}"
+                              press=".onChange"/>
+                           <Button
+                              id="deleteProductButton"
+                              icon="sap-icon://delete"
+                              tooltip="{i18n>deleteButtonText}"
+                              press=".onDelete"/>
+                           <Button
+                              id="sortProductButton"
+                              icon="sap-icon://sort"
+                              tooltip="{i18n>sortButtonText}"
+                              press=".onSort"/>
+                        </content>
+                     </OverflowToolbar>
+                  </headerToolbar>
+                  <columns>
+                     <Column id="productId">
+                        <Text text="{i18n>productId}"/>
+                     </Column>
+                     <Column id="productName">
+                        <Text text="{i18n>productName}"/>
+                     </Column>
+                     <Column id="productPrice">
+                        <Text text="{i18n>productPrice}"/>
+                     </Column>
+                  </columns>
+                  <items>
+                     <ColumnListItem>
+                        <cells>
+                           <Input value="{product>ProductID}"/>
+                        </cells>
+                        <cells>
+                           <Input value="{product>ProductName}"/>
+                        </cells>
+                        <cells>
+                           <Input value="{product>UnitPrice}"/>
+                        </cells>
+                     </ColumnListItem>
+                  </items>
+               </Table>
+            </content>
+         </Page>
+      </App>
+   </Shell>
+</mvc:View>
