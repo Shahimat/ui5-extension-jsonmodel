@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ODataV2Promise</title>
+<script
+    id="sap-ui-bootstrap"
+    src="/resources/sap-ui-core.js"
+    data-sap-ui-theme="sap_fiori_3"
+    data-sap-ui-libs="sap.m"
+    data-sap-ui-compatVersion="edge"
+    data-sap-ui-async="true"
+    data-sap-ui-preload=""
+    data-sap-ui-resourceroots='{
+        "test": "./",
+        "webapp": "../ui/"
+    }'>
+</script>
+<script>
+    sap.ui.getCore().attachInit(function() {
+        sap.ui.require([
+            'sap/ui/core/ComponentContainer',
+            'test/mock',
+        ], function (ComponentContainer, mock) {
+            new ComponentContainer({
+                name: 'webapp',
+                height: '100%',
+                async: true,
+                componentCreated: function (oEvent) {
+                    let oComponent = oEvent.getParameters().component;
+
+                    // Инициализмация мок данных происходит после инициализации Component.js
+                    mock.init( oComponent );
+                }
+            }).placeAt('content');
+        });
+    });
+</script>
+</head>
+<body class="sapUiBody" id="content">
+</body>
+</html>
