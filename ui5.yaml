@@ -1,0 +1,9 @@
+specVersion: '2.2'
+metadata:
+  name: ui5-extension-jsonmodel
+type: library
+framework:
+  name: OpenUI5
+  version: "1.84.1"
+  libraries:
+    - name: sap.ui.core

@@ -1,0 +1,29 @@
+{
+  "name": "ui5-extension-jsonmodel",
+  "version": "0.0.1",
+  "description": "extension JSONModel for OpenUI5",
+  "main": "main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {},
+  "files": [
+    "LICENSE",
+    "Readme.md",
+    ".gitignore",
+    "lib/"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Shahimat/ui5-extension-jsonmodel.git"
+  },
+  "keywords": [
+    "ui5", "OpenUI5", "JSONModel", "fetch", "promise", "api", "crud"
+  ],
+  "author": "Gevorg Nakhapetyan <ngs22071993@gmail.com> (https://github.com/shahimat)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Shahimat/ui5-extension-jsonmodel/issues"
+  },
+  "homepage": "https://github.com/Shahimat/ui5-extension-jsonmodel#readme"
+}
