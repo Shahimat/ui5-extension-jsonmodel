@@ -10,7 +10,8 @@
   "files": [
     "LICENSE",
     "Readme.md",
-    "src/*"
+    "src/*",
+    "ui5.yaml"
   ],
   "repository": {
     "type": "git",
