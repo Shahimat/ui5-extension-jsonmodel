@@ -10,7 +10,7 @@
   "files": [
     "LICENSE",
     "Readme.md",
-    "lib/*"
+    "src/*"
   ],
   "repository": {
     "type": "git",
