@@ -4,7 +4,8 @@
   "description": "extension JSONModel for OpenUI5",
   "main": "main.js",
   "scripts": {
-    "test:ui": "ui5 serve"
+    "test:ui": "ui5 serve",
+    "test:service1": "node ./test/service/sample1"
   },
   "files": [
     "LICENSE",
@@ -32,6 +33,7 @@
   },
   "homepage": "https://github.com/Shahimat/ui5-extension-jsonmodel#readme",
   "devDependencies": {
-    "@ui5/cli": "^2.10.4"
+    "@ui5/cli": "^2.10.4",
+    "express": "^4.17.1"
   }
 }
