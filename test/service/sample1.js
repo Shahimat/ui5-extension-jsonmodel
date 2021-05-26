@@ -1,9 +1,12 @@
 const express = require('express');
+const cors = require('cors')
 const app = express();
 const jsonParser = express.json();
 const port = 8090;
 
 let Products = require('./sample1.json');
+
+app.use( cors() );
 
 // Read all
 app.get('/', (req, res) => {
