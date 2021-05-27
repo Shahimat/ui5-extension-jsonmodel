@@ -9,11 +9,11 @@
          <Page title="{i18n>homePageTitle}">
             <content>
                <Table
-                  id="productList"
+                  id="productTable"
                   growing="true"
                   growingThreshold="10"
                   items="{
-                     path: 'product>/Products'
+                     path: 'product>/'
                   }"
                   mode="SingleSelectLeft"
                   selectionChange="onSelectionChange">
