@@ -25,7 +25,7 @@ app.post('/', jsonParser, (req, res) => {
     return res.sendStatus(400);
   }
   let oData = {
-    ProductID: Products[Products.length - 1].ProductID + 1,
+    ProductID: Products[Products.length - 1]? Products[Products.length - 1].ProductID + 1: 0,
     ProductName: req.body.ProductName,
     UnitPrice: req.body.UnitPrice
   }
@@ -50,7 +50,7 @@ app.put('/', jsonParser, (req, res) => {
 // Delete id
 app.delete('/:id', (req, res) => {
   const id = Number(req.params.id);
-  if (id === undefined || id < 0 || id >= Products.length) {
+  if (id === undefined || id < 0) {
     return res.sendStatus(400);
   }
   Products = Products.filter(oItem => oItem.ProductID !== id);
