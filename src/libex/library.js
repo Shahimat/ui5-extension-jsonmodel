@@ -11,6 +11,10 @@ sap.ui.define([
     types: [],
     interfaces: [],
     controls: [
+      'libex.CallSwitch',
+      'libex.CRUD',
+      'libex.CRUDcontext',
+      'libex.CRUDfetch',
       'libex.JSONModel'
     ],
     elements: []

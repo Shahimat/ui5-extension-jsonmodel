@@ -47,7 +47,8 @@ sap.ui.define([
                 MessageToast.show('Ничего не выбрано');
                 return;
             }
-            this.model.read(`/${this.productSelectedItem}`).then((oData) => {
+            this.model.read(`/${this.productSelectedItem}`).then((oContext) => {
+                let oData = oContext.oData;
                 oData.UnitPrice = oData.UnitPrice + 156;
                 return this.model.update('/', oData);
             }).then(() => {

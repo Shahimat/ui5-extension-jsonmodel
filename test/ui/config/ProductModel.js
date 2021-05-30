@@ -11,9 +11,9 @@ sap.ui.define([
       {
         type: 'create',
         pattern: /^\/$/,
-        uri: (oContext) => `${oContext.url}/`,
+        uri:  (oContext) => `${oContext.url}/`,
         body: (oContext) => JSON.stringify(oContext.params),
-        req: (oContext) => {
+        req:  (oContext) => {
           return {
             method: 'POST',
             headers: {
@@ -26,9 +26,9 @@ sap.ui.define([
       {
         type: 'read',
         pattern: /^\/$/,
-        uri: (oContext) => `${oContext.url}/`,
+        uri:  (oContext) => `${oContext.url}/`,
         body: (oContext) => {},
-        req: (oContext) => {},
+        req:  (oContext) => {},
         task: (oContext) => {
           oContext.model.setProperty(oContext.uri, oContext.oData);
         }
@@ -36,17 +36,17 @@ sap.ui.define([
       {
         type: 'read',
         pattern: /^\/(\d+)$/,
-        uri: (oContext) => `${oContext.url}/${oContext.patternMatched[1]}`,
+        uri:  (oContext) => `${oContext.url}/${oContext.patternMatched[1]}`,
         body: (oContext) => {},
-        req: (oContext) => {},
+        req:  (oContext) => {},
         task: (oContext) => {}
       },
       {
         type: 'update',
         pattern: /^\/$/,
-        uri: (oContext) => `${oContext.url}/`,
+        uri:  (oContext) => `${oContext.url}/`,
         body: (oContext) => JSON.stringify(oContext.params),
-        req: (oContext) => {
+        req:  (oContext) => {
           return {
             method: 'PUT',
             headers: {
@@ -59,9 +59,9 @@ sap.ui.define([
       {
         type: 'delete',
         pattern: /^\/(\d+)$/,
-        uri: (oContext) => `${oContext.url}/${oContext.patternMatched[1]}`,
+        uri:  (oContext) => `${oContext.url}/${oContext.patternMatched[1]}`,
         body: (oContext) => {},
-        req: (oContext) => {
+        req:  (oContext) => {
           return {
             method: 'DELETE',
           }

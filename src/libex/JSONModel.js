@@ -10,58 +10,48 @@ sap.ui.define([
   const ExJSONModel = JSONModel.extend('libex.JSONModel', {
 
     metadata: {
-      publicMethods: ['addDataSourcesFromConfig', 'create', 'read', 'update', 'delete', 'setCurrent', 'getCurrent',
-      'getChilds']
+      publicMethods: [
+        'create', 'read', 'update', 'delete', 'setCurrentCRUD', 'getCurrentCRUD', 'getChildsCRUD', 'getCRUD'
+      ]
     },
 
     constructor: function (oSettings) {
       JSONModel.apply(this, []);
 
       // add new CRUD node
-      this.crud = new CRUD('main', this);
-      this.crud.setPointers(this);
+      this.crud = new CRUD('main');
+      this.crud.setModel(this);
+      this.crud.setPointers(/* oControl */this/*, default fields: [create, read, update, delete] */);
 
       if (!oSettings || !oSettings.cfgPath) {
         console.warn('no settings or no cfgPath found for libex.JSONModel');
         return;
       }
-      const that = {
-        it: this,
-        defaultDataSource: oSettings.defaultDataSource,
-      };
-      sap.ui.require([oSettings.cfgPath], function(aConfig) {
-        this.it.addDataSourcesFromConfig(aConfig, this.defaultDataSource);
-      }.bind(that));
-    },
-
-    addDataSourcesFromConfig: function (aConfig, sDefaultDS = undefined) {
-      if (!aConfig || !Array.isArray(aConfig)) {
-        console.warn('config not found');
-        return;
-      }
-      aConfig.forEach(oCRUD => {
-        if (!oCRUD.isComplexCRUD) {
-          console.warn('the object is not complex CRUD');
-          return;
+      sap.ui.require([oSettings.cfgPath], function(aCRUD) {
+        if (aCRUD) {
+          this.addComplexCRUD(aCRUD);
+          this.setCurrent(aCRUD[0].name);
         }
-        this.crud.addComplexCRUD(oCRUD);
-      });
-      this.crud.setContext(this);
-      this.setCurrent('production', true);
-      if (sDefaultDS) {
-        this.setCurrent(sDefaultDS);
+      }.bind(this.crud));
+    },
+
+    setCurrentCRUD: function (sName) {
+      this.crud.setCurrent(sName);
+    },
+
+    getCRUD: function (sName = undefined) {
+      if (!sName) {
+        return this.crud;
       }
+      debugger;
+      return this.crud.getCRUD(sName);
     },
 
-    setCurrent: function (sName, bAll) {
-      this.crud.setCurrent(sName, bAll);
-    },
-
-    getCurrent: function () {
+    getCurrentCRUD: function () {
       return this.crud.getCurrent();
     },
 
-    getChilds: function () {
+    getChildsCRUD: function () {
       return this.crud.getChilds();
     }
 

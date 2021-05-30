@@ -1,84 +1,96 @@
+/**
+ * Класс, определяющий базовые методы работы со стандартными fetch вызовами.
+ */
 sap.ui.define([
-    'libex/CRUD'
+  'libex/CRUDcontext'
 ], (
-    CRUD
+  CRUDcontext
 ) => {
   'use strict';
 
-  const CRUDfetch = CRUD.extend('libex.CRUDfetch', {
+  const CRUDfetch = CRUDcontext.extend('libex.CRUDfetch', {
 
     metadata: {
       publicMethods: []
     },
 
-    constructor: function (sName, sURL, aPatterns) {
-      CRUD.apply(this, arguments);
+    constructor: function (sName, sURL, aPatternList) {
+      CRUDcontext.apply(this, arguments);
       this.url = sURL;
-      this.addCRUD('production', this._createFetch, this._readFetch, this._updateFetch, this._deleteFetch);
-      this.addCRUD('develop', this._createFetch, this._readFetch, this._updateFetch, this._deleteFetch);
-      this.setContext(this);
-      this.patterns = aPatterns;
+      this.addCRUD('default', this._createFetch, this._readFetch, this._updateFetch, this._deleteFetch);
+      this.setCurrent('default');
+      this.setPatternList(aPatternList);
+    },
+
+    setPatternList: function (aPatternList) {
+      if (!this._checkPatternList(aPatternList)) {
+        return;
+      }
+      this.clearContextOperations();
+      aPatternList.forEach(oPattern => {
+        this.addContextOperations({
+          type: oPattern.type,
+          pattern: oPattern.pattern,
+          operations: [
+            {
+              type: 'field',
+              field: 'serviceURL',
+              operation: oPattern.uri
+            },
+            {
+              type: 'field',
+              field: 'body',
+              operation: oPattern.body
+            },
+            {
+              type: 'field',
+              field: 'req',
+              operation: oPattern.req
+            },
+            {
+              type: 'custom',
+              field: 'oData',
+              operation: this._fetch.bind(this)
+            },
+            {
+              type: 'field',
+              operation: oPattern.task
+            }
+          ]
+        })
+      });
     },
 
     _newContext: function (...args) {
-      delete this.context;
-      this.context = {
-        data: {
-          url: this.url,
-          uri: args[0],
-          type: args.length >= 3? args[2]: args[1],
-          params: args.length >= 3? args[1]: {},
-          model: this.model
-        },
-        pattern: undefined
-      };
+      this.newContext({
+        url: this.url,
+        uri: args[0],
+        type: args.length >= 3? args[2]: args[1],
+        params: args.length >= 3? args[1]: {},
+        model: this.model
+      });
     },
 
-    _modifyContext: async function () {
-      delete this.context.data.serviceURL;
-      delete this.context.data.body;
-      delete this.context.data.req;
-      delete this.context.data.serviceURI;
-      if (this.context.pattern.uri) {
-        let uri = this.context.pattern.uri(this.context.data);
-        if (uri) {
-          this.context.data.serviceURL = uri;
-        }
+    _fetch: async function (oContext) {
+      if (oContext.req && oContext.body) {
+        oContext.req.body = oContext.body; 
       }
-      if (this.context.pattern.body) {
-        let body = this.context.pattern.body(this.context.data);
-        if (body) {
-          this.context.data.body = body;
-        }
-      }
-      if (this.context.pattern.req) {
-        let req = this.context.pattern.req(this.context.data);
-        if (req) {
-          this.context.data.req = req;
-          this.context.data.req.body = this.context.data.body;
-        }
-      }
-      let oRes = await fetch(this.context.data.serviceURL, this.context.data.req);
+      let oRes = await fetch(oContext.serviceURL, oContext.req);
       let sText = await oRes.text();
-      this.context.data.oData = this._getJSON(sText);
-      if (this.context.pattern.task) {
-        this.context.pattern.task(this.context.data);
-      }
-      return this._nextPromiseChain(this.context.data.oData);
+      return this._getJSON(sText);
     },
 
     _findCustomPattern: function () {
-      let uri  = this.context.data.uri;
-      let type = this.context.data.type;
-      delete this.context.data.patternMatched;
-      delete this.context.pattern;
-      for (let i = 0; i < this.patterns.length; i++) {
-        let oPattern = this.patterns[i];
+      let uri  = this.getContext().uri;
+      let type = this.getContext().type;
+      let list = this.getContextOperationsList();
+      for (let i = 0; i < list.length; i++) {
+        let oPattern = list[i];
         if (type === oPattern.type) {
           let aPatternMatched = uri.match(oPattern.pattern);
           if (aPatternMatched) {
-            this.context.data.patternMatched = aPatternMatched;
-            this.context.pattern = oPattern;
+            this.addToContext('patternMatched', aPatternMatched);
+            this.setContextOperations(oPattern);
             break;
           }
         }
@@ -89,34 +101,28 @@ sap.ui.define([
     _createFetch: function (...args) {
       this._newContext(...args, 'create');
       return this._findCustomPattern().then(() => {
-        return this._modifyContext();
+        return this.runContextOperations();
       });
     },
 
     _readFetch: function (...args) {
       this._newContext(...args, 'read');
       return this._findCustomPattern().then(() => {
-        return this._modifyContext();
+        return this.runContextOperations();
       });
     },
 
     _updateFetch: function (...args) {
       this._newContext(...args, 'update');
       return this._findCustomPattern().then(() => {
-        return this._modifyContext();
+        return this.runContextOperations();
       });
     },
 
     _deleteFetch: function (...args) {
       this._newContext(...args, 'delete');
       return this._findCustomPattern().then(() => {
-        return this._modifyContext();
-      });
-    },
-
-    _nextPromiseChain: function (...args) {
-      return new Promise((res, rej) => {
-        res(...args);
+        return this.runContextOperations();
       });
     },
 
@@ -128,7 +134,30 @@ sap.ui.define([
         return undefined;
       }
       return data;
-    }
+    },
+
+    /* Check's */
+
+    _checkPatternList: function (aPatternList) {
+      if (!aPatternList && !Array.isArray(aPatternList)) {
+        console.warn('aPatternList not found <array>');
+        return false;
+      }
+      if (!aPatternList.every(oItem => { 
+        return oItem.type && typeof(oItem.type)    === 'string'   &&
+          oItem.pattern   && typeof(oItem.pattern) === 'object'   &&
+          oItem.uri       && typeof(oItem.uri)     === 'function' &&
+          oItem.body      && typeof(oItem.body)    === 'function' &&
+          oItem.req       && typeof(oItem.req)     === 'function' &&
+          oItem.task      && typeof(oItem.task)    === 'function'
+        }
+      )) {
+        console.warn('oPattern not found. Structure: Object{ type <string>, pattern <regexp>, uri <function>, ' +
+          'body <function>, req <function>, task <function> }');
+        return false;
+      }
+      return true;
+    },
 
   });
 
