@@ -7,7 +7,10 @@ sap.ui.define([
 
   return [
 
-    new CRUDfetch('sample1', 'http://localhost:8090', [
+    new CRUDfetch('sample1', {
+      url: 'http://localhost:8090'
+    },
+    [
       {
         type: 'create',
         pattern: /^\/$/,

@@ -14,9 +14,13 @@ sap.ui.define([
       publicMethods: []
     },
 
-    constructor: function (sName, sURL, aPatternList) {
+    constructor: function (sName, oOptions, aPatternList) {
       CRUDcontext.apply(this, arguments);
-      this.url = sURL;
+      if (!oOptions || !typeof(oOptions.url) === 'string') {
+        console.error('url not found.');
+        return;
+      }
+      this.url = oOptions.url;
       this.addCRUD('default', this._createFetch, this._readFetch, this._updateFetch, this._deleteFetch);
       this.setCurrent('default');
       this.setPatternList(aPatternList);

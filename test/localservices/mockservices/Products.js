@@ -7,7 +7,10 @@ sap.ui.define([
   
   return [
 
-    new CRUDdev('develop', '', [
+    new CRUDdev('develop', {
+      uri: '',
+    }, 
+    [
       {
         type: 'create',
         pattern: /^\/$/,
