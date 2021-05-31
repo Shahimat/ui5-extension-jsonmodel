@@ -6,7 +6,7 @@ extension JSONModel for OpenUI5
 
 [English](./docs/en/Readme.md)
 
-[Russian](./docs/en/Readme.md)
+[Russian](./docs/ru/Readme.md)
 
 ## License
 
