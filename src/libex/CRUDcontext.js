@@ -75,12 +75,14 @@ sap.ui.define([
             } else {
               oOperation.operation(this._context);
             }
+            break;
           case 'custom':
             if (oOperation.field) {
               this._context[oOperation.field] = await oOperation.operation(this._context);
             } else {
               await oOperation.operation(this._context);
             }
+            break;
         }
       };
       return this._nextPromiseChain(this._context);

@@ -48,6 +48,9 @@ sap.ui.define([
       const addObjectCRUD = (oCRUD) => {
         oCRUD.setModel(this.model);
         this.content.push(oCRUD);
+        if (this.content.length === 1) {
+          this.setCurrent(oCRUD.name);
+        }
       }
       if (Array.isArray(anyCRUD)) {
         anyCRUD.forEach(oCRUD => {

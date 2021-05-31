@@ -30,25 +30,32 @@ sap.ui.define([
       sap.ui.require([oSettings.cfgPath], function(aCRUD) {
         if (aCRUD) {
           this.addComplexCRUD(aCRUD);
-          this.setCurrent(aCRUD[0].name);
         }
       }.bind(this.crud));
     },
 
-    setCurrentCRUD: function (sName) {
-      this.crud.setCurrent(sName);
+    addComplexCRUD: function (anyCRUD) {
+      this.crud.addComplexCRUD(anyCRUD);
     },
 
-    getCRUD: function (sName = undefined) {
+    getRootCRUD: function () {
+      return this.crud;
+    },
+
+    getCRUD: function (sName) {
       if (!sName) {
-        return this.crud;
+        console.warn(`CRUD "${sName}" not found`);
+        return;
       }
-      debugger;
       return this.crud.getCRUD(sName);
     },
 
     getCurrentCRUD: function () {
       return this.crud.getCurrent();
+    },
+
+    setCurrentCRUD: function (sName) {
+      this.crud.setCurrent(sName);
     },
 
     getChildsCRUD: function () {

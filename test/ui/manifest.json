@@ -47,8 +47,7 @@
             "product": {
                 "type": "libex.JSONModel",
                 "settings": {
-                    "cfgPath": "webapp/config/ProductModel",
-                    "defaultDataSource": "sample1"
+                    "cfgPath": "webapp/config/ProductModel"
                 }
             }
         },

@@ -84,6 +84,7 @@ sap.ui.define([
       let uri  = this.getContext().uri;
       let type = this.getContext().type;
       let list = this.getContextOperationsList();
+      let isFounded = false;
       for (let i = 0; i < list.length; i++) {
         let oPattern = list[i];
         if (type === oPattern.type) {
@@ -91,9 +92,14 @@ sap.ui.define([
           if (aPatternMatched) {
             this.addToContext('patternMatched', aPatternMatched);
             this.setContextOperations(oPattern);
+            isFounded = true;
             break;
           }
         }
+      }
+      if (!isFounded) {
+        console.error(`pattern for uri "${uri}" & type "${type}" not founded.`);
+        return;
       }
       return this._nextPromiseChain();
     },
