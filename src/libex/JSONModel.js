@@ -1,6 +1,6 @@
 sap.ui.define([
   'sap/ui/model/json/JSONModel',
-  'libex/CRUD'
+  'libex/core/CRUD'
 ], (
   JSONModel,
   CRUD

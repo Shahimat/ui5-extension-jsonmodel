@@ -1,23 +1,23 @@
 /**
- * Класс, определяющий базовые методы работы со стандартными fetch вызовами.
+ * Класс, определяющий базовые методы работы с develop вызовами.
  */
 sap.ui.define([
-  'libex/CRUDcontext'
+  'libex/core/CRUDcontext'
 ], (
   CRUDcontext
 ) => {
   'use strict';
 
-  const CRUDfetch = CRUDcontext.extend('libex.CRUDfetch', {
+  const CRUDdev = CRUDcontext.extend('libex.patterns.CRUDdev', {
 
     metadata: {
       publicMethods: []
     },
 
-    constructor: function (sName, sURL, aPatternList) {
+    constructor: function (sName, sURI, aPatternList) {
       CRUDcontext.apply(this, arguments);
-      this.url = sURL;
-      this.addCRUD('default', this._createFetch, this._readFetch, this._updateFetch, this._deleteFetch);
+      this.uri = sURI;
+      this.addCRUD('default', this._createDev, this._readDev, this._updateDev, this._deleteDev);
       this.setCurrent('default');
       this.setPatternList(aPatternList);
     },
@@ -34,26 +34,7 @@ sap.ui.define([
           operations: [
             {
               type: 'field',
-              field: 'serviceURL',
-              operation: oPattern.uri
-            },
-            {
-              type: 'field',
-              field: 'body',
-              operation: oPattern.body
-            },
-            {
-              type: 'field',
-              field: 'req',
-              operation: oPattern.req
-            },
-            {
-              type: 'custom',
               field: 'oData',
-              operation: this._fetch.bind(this)
-            },
-            {
-              type: 'field',
               operation: oPattern.task
             }
           ]
@@ -63,21 +44,12 @@ sap.ui.define([
 
     _newContext: function (...args) {
       this.newContext({
-        url: this.url,
+        serviceURI: this.uri,
         uri: args[0],
         type: args.length >= 3? args[2]: args[1],
         params: args.length >= 3? args[1]: {},
         model: this.model
       });
-    },
-
-    _fetch: async function (oContext) {
-      if (oContext.req && oContext.body) {
-        oContext.req.body = oContext.body; 
-      }
-      let oRes = await fetch(oContext.serviceURL, oContext.req);
-      let sText = await oRes.text();
-      return this._getJSON(sText);
     },
 
     _findCustomPattern: function () {
@@ -104,28 +76,28 @@ sap.ui.define([
       return this._nextPromiseChain();
     },
 
-    _createFetch: function (...args) {
+    _createDev: function (...args) {
       this._newContext(...args, 'create');
       return this._findCustomPattern().then(() => {
         return this.runContextOperations();
       });
     },
 
-    _readFetch: function (...args) {
+    _readDev: function (...args) {
       this._newContext(...args, 'read');
       return this._findCustomPattern().then(() => {
         return this.runContextOperations();
       });
     },
 
-    _updateFetch: function (...args) {
+    _updateDev: function (...args) {
       this._newContext(...args, 'update');
       return this._findCustomPattern().then(() => {
         return this.runContextOperations();
       });
     },
 
-    _deleteFetch: function (...args) {
+    _deleteDev: function (...args) {
       this._newContext(...args, 'delete');
       return this._findCustomPattern().then(() => {
         return this.runContextOperations();
@@ -152,14 +124,10 @@ sap.ui.define([
       if (!aPatternList.every(oItem => { 
         return oItem.type && typeof(oItem.type)    === 'string'   &&
           oItem.pattern   && typeof(oItem.pattern) === 'object'   &&
-          oItem.uri       && typeof(oItem.uri)     === 'function' &&
-          oItem.body      && typeof(oItem.body)    === 'function' &&
-          oItem.req       && typeof(oItem.req)     === 'function' &&
           oItem.task      && typeof(oItem.task)    === 'function'
         }
       )) {
-        console.warn('oPattern not found. Structure: Object{ type <string>, pattern <regexp>, uri <function>, ' +
-          'body <function>, req <function>, task <function> }');
+        console.warn('oPattern not found. Structure: Object{ type <string>, pattern <regexp>, task <function> }');
         return false;
       }
       return true;
@@ -167,6 +135,6 @@ sap.ui.define([
 
   });
 
-  return CRUDfetch;
+  return CRUDdev;
 
 });

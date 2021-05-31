@@ -9,7 +9,7 @@
 ) => {
   'use strict';
 
-  const CallSwitch = Object.extend('libex.CRUD', {
+  const CallSwitch = Object.extend('libex.core.CRUD', {
 
     metadata: {
       publicMethods: ['setContext', 'addCRUD', 'addComplexCRUD', 'setCurrent', 'setPointers',

@@ -1,5 +1,5 @@
 sap.ui.define([
-  'libex/CRUDdev'
+  'libex/patterns/CRUDdev'
 ], (
   CRUDdev
 ) => {

@@ -1,5 +1,5 @@
 sap.ui.define([
-  'libex/CRUDfetch'
+  'libex/patterns/CRUDfetch'
 ], (
   CRUDfetch
 ) => {

@@ -4,13 +4,13 @@
  * этот же контекст.
  */
 sap.ui.define([
-  'libex/CRUD'
+  'libex/core/CRUD'
 ], (
     CRUD
 ) => {
   'use strict';
 
-  const CRUDfetch = CRUD.extend('libex.CRUDcontext', {
+  const CRUDfetch = CRUD.extend('libex.core.CRUDcontext', {
 
     metadata: {
       publicMethods: []

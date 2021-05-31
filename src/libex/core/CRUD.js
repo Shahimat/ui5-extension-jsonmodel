@@ -8,14 +8,14 @@
  */
 sap.ui.define([
   'sap/ui/base/Object',
-  'libex/CallSwitch'
+  'libex/core/CallSwitch'
 ], (
   Object,
   CallSwitch
 ) => {
   'use strict';
 
-  const CRUD = Object.extend('libex.CRUD', {
+  const CRUD = Object.extend('libex.core.CRUD', {
 
     metadata: {
       publicMethods: [
