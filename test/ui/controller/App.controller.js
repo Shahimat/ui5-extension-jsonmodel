@@ -27,7 +27,7 @@ sap.ui.define([
 
         onUpdateFrontendModelFromBack: function () {
             BusyIndicator.show(0);
-            return this.model.read('/').then(oData => {
+            return this.model.read('/').then(oContext => {
                 BusyIndicator.hide();
                 return this._nextPromiseChain();
             })
