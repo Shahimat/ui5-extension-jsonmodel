@@ -6,6 +6,7 @@
   "scripts": {
     "test:ui": "ui5 serve",
     "test:ui:open": "ui5 serve -o /test-resources/ui/index.html",
+    "test:ui:dev": "ui5 serve -o /test-resources/localservices/index.html",
     "test:service1": "node ./test/service/sample1",
     "test:sample1": "npm run test:service1 & npm run test:ui:open"
   },

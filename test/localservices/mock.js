@@ -1,13 +1,15 @@
 sap.ui.define([
-
+  'test/mockservices/Products'
 ], (
-
+  Products
 ) => {
   'use strict';
 
   return {
     init: async function (oComponent) {
-      await oComponent.getModel('product').loadData('/test-resources/localservices/mockdata/Products.json');
+      let oModel = oComponent.getModel('product');
+      await oModel.loadData('/test-resources/localservices/mockdata/Products.json');
+      oModel.addComplexCRUD(Products);
     }
   };
 
