@@ -39,7 +39,7 @@ app.put('/', jsonParser, (req, res) => {
     return res.sendStatus(400);
   }
   let nIndex = Products.findIndex(oItem => oItem.ProductID === req.body.ProductID);
-  if (nIndex === undefined || nIndex < 0 || nIndex >= Products.length) {
+  if (nIndex === undefined || nIndex < 0) {
     return res.sendStatus(400);
   }
   Products[nIndex].ProductName = req.body.ProductName;
