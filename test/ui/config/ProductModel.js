@@ -1,20 +1,32 @@
 sap.ui.define([
-  'libex/patterns/CRUDfetch'
+  'libex/core/CRUDuniversal',
+  'libex/patterns/FetchPattern'
 ], (
-  CRUDfetch
+  CRUDuniversal,
+  FetchPattern
 ) => {
   'use strict';
 
   return [
 
-    new CRUDfetch('sample1', {
-      url: 'http://localhost:8090'
+    new CRUDuniversal('sample1', {
+      uri: 'http://localhost:8090',
+      tasks: [
+        'fullUri',
+        'body',
+        'req',
+        'fetch',
+        'task'
+      ],
+      common: {
+        fetch: FetchPattern.fetch
+      }
     },
     [
       {
         type: 'create',
         pattern: /^\/$/,
-        uri:  (oContext) => `${oContext.url}/`,
+        fullUri:  (oContext) => `${oContext.serviceURI}/`,
         body: (oContext) => JSON.stringify(oContext.params),
         req:  (oContext) => {
           return {
@@ -24,14 +36,11 @@ sap.ui.define([
             },
           }
         },
-        task: (oContext) => {}
       },
       {
         type: 'read',
         pattern: /^\/$/,
-        uri:  (oContext) => `${oContext.url}/`,
-        body: (oContext) => {},
-        req:  (oContext) => {},
+        fullUri:  (oContext) => `${oContext.serviceURI}/`,
         task: (oContext) => {
           oContext.model.setProperty(oContext.uri, oContext.oData);
         }
@@ -39,15 +48,12 @@ sap.ui.define([
       {
         type: 'read',
         pattern: /^\/(\d+)$/,
-        uri:  (oContext) => `${oContext.url}/${oContext.patternMatched[1]}`,
-        body: (oContext) => {},
-        req:  (oContext) => {},
-        task: (oContext) => {}
+        fullUri:  (oContext) => `${oContext.serviceURI}/${oContext.patternMatched[1]}`,
       },
       {
         type: 'update',
         pattern: /^\/$/,
-        uri:  (oContext) => `${oContext.url}/`,
+        fullUri:  (oContext) => `${oContext.serviceURI}/`,
         body: (oContext) => JSON.stringify(oContext.params),
         req:  (oContext) => {
           return {
@@ -57,19 +63,16 @@ sap.ui.define([
             },
           }
         },
-        task: (oContext) => {}
       },
       {
         type: 'delete',
         pattern: /^\/(\d+)$/,
-        uri:  (oContext) => `${oContext.url}/${oContext.patternMatched[1]}`,
-        body: (oContext) => {},
+        fullUri:  (oContext) => `${oContext.serviceURI}/${oContext.patternMatched[1]}`,
         req:  (oContext) => {
           return {
             method: 'DELETE',
           }
         },
-        task: (oContext) => {}
       },
     ]),
 

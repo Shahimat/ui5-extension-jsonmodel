@@ -4,9 +4,11 @@
  * этот же контекст.
  */
 sap.ui.define([
-  'libex/core/CRUD'
+  'libex/core/CRUD',
+  'libex/core/Context'
 ], (
-    CRUD
+    CRUD,
+    Context
 ) => {
   'use strict';
 
@@ -18,24 +20,9 @@ sap.ui.define([
 
     constructor: function (sName) {
       CRUD.apply(this, arguments);
-      this._context = {};
+      this._context = new Context();
       this._contextOperationsList    = [];
       this._contextCurrentOperations = undefined;
-    },
-
-    newContext: function (oDataDefault = undefined) {
-      this.clearContext();
-      if (oDataDefault) {
-        this._copySimpleJSobject(this._context, oDataDefault);
-      }
-    },
-
-    clearContext: function () {
-      this._clearSimpleJSobject(this._context);
-    },
-
-    addToContext: function (sField, any) {
-      this._context[sField] = any;
     },
 
     getContext: function () {
@@ -47,7 +34,7 @@ sap.ui.define([
     },
 
     addContextOperations: function (oContextOperations) {
-      if (!this._checkContextOperationsList(oContextOperations)) {
+      if (!this._checkContextOperations(oContextOperations)) {
         return;
       }
       this._contextOperationsList.push(oContextOperations);
@@ -61,86 +48,45 @@ sap.ui.define([
       this._contextCurrentOperations = oContextOperations;
     },
 
-    runContextOperations: async function () {
-      if (!this._contextCurrentOperations) {
-        console.warn('contextCurrentOperations not found');
-        return;
-      }
-      for (let i = 0; i < this._contextCurrentOperations.operations.length; i++) {
-        let oOperation = this._contextCurrentOperations.operations[i];
-        switch (oOperation.type) {
-          case 'field':
-            if (oOperation.field) {
-              this._context[oOperation.field] = oOperation.operation(this._context);
-            } else {
-              oOperation.operation(this._context);
-            }
-            break;
-          case 'custom':
-            if (oOperation.field) {
-              this._context[oOperation.field] = await oOperation.operation(this._context);
-            } else {
-              await oOperation.operation(this._context);
-            }
-            break;
+    runContextOperations: function () { //async
+      return new Promise(async function(res, rej) {
+        if (!this._contextCurrentOperations) {
+          let log = 'contextCurrentOperations not found';
+          console.warn(log);
+          rej(log);
+          return;
         }
-      };
-      return this._nextPromiseChain(this._context);
-    },
-
-    _clearSimpleJSobject: function (jsObj) {
-      for (let key in jsObj) {
-        delete jsObj[key];
-      }
-    },
-
-    _copySimpleJSfield: function (jsObj, sField, any) {
-      const copyJS = (any) => {
-        let oRes;
-        if (Array.isArray(any)) {
-          oRes = [];
-          any.forEach(anyItem => {
-            oRes.push(copyJS(anyItem));
-          });
-          return oRes;
-        }
-        return any;
-      }
-      jsObj[sField] = copyJS(any);
-    },
-
-    _copySimpleJSobject: function (jsObj, jsObjCopied) {
-      if (!typeof(jsObj) === 'object' || !typeof(jsObjCopied) === 'object') {
-        console.warn('jsObj or jsObjCopied are not objects');
-        return;
-      }
-      for (let key in jsObjCopied) {
-        delete jsObj[key];
-        this._copySimpleJSfield(jsObj, key, jsObjCopied[key]);
-      }
-    },
-
-    _nextPromiseChain: function (...args) {
-      return new Promise((res, rej) => {
-        res(...args);
-      });
+        for (let i = 0; i < this._contextCurrentOperations.operations.length; i++) {
+          let oOperation = this._contextCurrentOperations.operations[i];
+          let any;
+          switch (oOperation.constructor.name) {
+            case 'Function':
+              any = oOperation(this._context);
+              break;
+            case 'AsyncFunction':
+              any = await oOperation(this._context);
+              break;
+          }
+          if (any !== undefined) {
+            this._context.addFieldContext(oOperation.name, any);
+          }
+        };
+        res(this._context);
+      }.bind(this));
     },
 
     /* Check's */
 
-    _checkContextOperationsList: function (aContextOperationsList) {
-      if (!aContextOperationsList || !aContextOperationsList.operations ||
-      !Array.isArray(aContextOperationsList.operations)) {
-        console.warn('aContextOperationsList not found. Structure: aContextOperationsList <object>: {operations: <array>}');
+    _checkContextOperations: function (oContextOperations) {
+      if (!oContextOperations || !oContextOperations.operations ||
+      !Array.isArray(oContextOperations.operations)) {
+        console.warn('oContextOperations not found. Structure: oContextOperations <object>: {operations: <array of functions>}');
         return false;
       }
-      const types = ['field', 'custom'];
-      if (!aContextOperationsList.operations.every(oOperation => {
-        return oOperation.type && typeof(oOperation.type) === 'string' && types.includes(oOperation.type) &&
-        oOperation.operation && typeof(oOperation.operation) === 'function'
+      if (!oContextOperations.operations.every(fOperation => {
+        return fOperation && typeof(fOperation) === 'function'
       })) {
-        console.warn('Operation not found. Structure: { operation <function>, type <string> }');
-        console.warn(`Allowed types: ${types.join(',')}`);
+        console.warn('Operation not found <function>.');
         return false;
       }
       return true;
