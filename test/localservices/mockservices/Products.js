@@ -1,20 +1,23 @@
 sap.ui.define([
-  'libex/patterns/CRUDdev'
+  'libex/core/CRUDuniversal'
 ], (
-  CRUDdev
+  CRUDuniversal
 ) => {
   'use strict';
   
   return [
 
-    new CRUDdev('develop', {
+    new CRUDuniversal('develop', {
       uri: '',
+      tasks: [
+        'oData'
+      ],
     }, 
     [
       {
         type: 'create',
         pattern: /^\/$/,
-        task: (oContext) => {
+        oData: (oContext) => {
           if (!oContext.params || !oContext.params.ProductName || !oContext.params.UnitPrice) {
             console.warn('Params not found');
           }
@@ -32,14 +35,14 @@ sap.ui.define([
       {
         type: 'read',
         pattern: /^\/$/,
-        task: (oContext) => {
+        oData: (oContext) => {
           return oContext.model.getProperty(`${oContext.serviceURI}/`);
         }
       },
       {
         type: 'read',
         pattern: /^\/(\d+)$/,
-        task: (oContext) => {
+        oData: (oContext) => {
           let ProductID = Number(oContext.patternMatched[1]);
           let aData = oContext.model.getProperty(`${oContext.serviceURI}/`);
           let nIndex = aData.findIndex(oItem => oItem.ProductID === ProductID);
@@ -53,7 +56,7 @@ sap.ui.define([
       {
         type: 'update',
         pattern: /^\/$/,
-        task: (oContext) => {
+        oData: (oContext) => {
           if (!oContext.params || !oContext.params.ProductName || !oContext.params.UnitPrice) {
             console.warn('Params not found');
           }
@@ -74,7 +77,7 @@ sap.ui.define([
       {
         type: 'delete',
         pattern: /^\/(\d+)$/,
-        task: (oContext) => {
+        oData: (oContext) => {
           let aData = oContext.model.getProperty(`${oContext.serviceURI}/`);
           let ProductID = Number(oContext.patternMatched[1]);
           aData = aData.filter(oItem => oItem.ProductID !== ProductID);
